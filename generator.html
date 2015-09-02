@@ -1,123 +1,176 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<style>
-			label {
-				display: inline-block;
-				margin-right: 8px;
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<style>
+	label {
+		display: inline-block;
+		margin-right: 8px;
+	}
+	.btn {
+		margin-top: 24px;
+	}
+	.col-md-2 {
+		border-right: 1px solid gray;
+	}
+	.gray-background {
+		background-color: #f2f2f2;
+	}
+	#html {
+		border: 1px solid #f2f2f2;
+		border-radius: 2px;
+		min-height: 80px;
+		margin-top: 24px;
+	}
+	</style>
+	<script>
+	function addElement() {
+		var columns = setColumns(getColumns());
+		var background = getBackground();
+		var header = setHeader(getHeader(), getColumns());
+		var output = assembleHTML(columns, background, header);
+		$('#mockup').append(output);
+	}
+
+	function getColumns() {
+		return $("#cols input[type='radio']:checked").val();
+	}
+
+	function getBackground() {
+		return $("#bkgd input[type='radio']:checked").val();
+	}
+
+	function getHeader() {
+		return $("#header input[type='text']").val();
+	}
+
+	function setColumns(columns) {
+		var row = "", col = "";
+		switch (columns) {
+			case "jumbo":
+			return '<div class="jumbotron"><div class="container">';
+			case "12":
+			col = '<div class="col-md-12"></div>';
+			break;
+			case "6x2":
+			col = '<div class="col-md-2"></div><div class="col-md-2"></div>';
+			break;
+			case "4x3":
+			col = '<div class="col-md-3"></div><div class="col-md-3"></div><div class="col-md-3"></div><div class="col-md-3"></div>';
+			break;
+			case "3x4":
+			col = '<div class="col-md-4"></div><div class="col-md-4"></div><div class="col-md-4"></div>';
+			break;
+			case "6offset3":
+			col = '<div class="col-md-6 col-md-offset-3"></div><div class="col-md-4"></div><div class="col-md-4"></div>';
+			break;
+			case "8offset2":
+			col = '<div class="col-md-8 col-md-offset-2"></div><div class="col-md-4"></div><div class="col-md-4"></div>';
+			break;
+		}
+		var row = '<div class="row">' + col + '</div>';
+		return row;
+	}
+
+	function setHeader(header, columns) {
+		if (columns === "jumbo") {
+			return '<h1>' + header + '</h1>';
+		} else {
+			return '<h2>' + header + '</h2>';
+		}
+	}
+
+	function assembleHTML(columns, background, header) {
+		var bkgd = "", output = "";
+		if (columns === '<div class="jumbotron"><div class="container">') {
+			output += columns + header + "</div></div>"
+		} else {
+			if (background === "white") {
+				output = '<div class="container-fluid"><div class="row"><div class="col-md-12">' + header + '</div></div>';
+			} else {
+				output = '<div class="container-fluid gray-background"><div class="row"><div class="col-md-12">' + header + '</div></div>';
 			}
-			.btn {
-				margin-top: 24px;
+			output += columns;
+			output += "</div>";
+		}
+		return output;
+	}
+
+	//submit with enter key
+	$(function() {
+		$('#header-input').keypress(function(event) {
+			if (event.which === 13) {
+				event.preventDefault();
+				addElement();
 			}
-			</style>
-			<script>
-				function addElement() {
-					var columns = setColumns(getColumns());
-					var background = getBackground();
-					var header = setHeader(getHeader(), getColumns());
-					var output = assembleHTML(columns, background, header);
-					$('#mockup').html(output);
-				}
+		});
+	});
+	//not my code.  Credit to http://stackoverflow.com/questions/6020714/escape-html-using-jquery
+	// List of HTML entities for escaping.
+	var htmlEscapes = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#x27;',
+		'/': '&#x2F;'
+	};
 
-				function getColumns() {
-					return $("#cols input[type='radio']:checked").val();
-				}
+	// Regex containing the keys listed immediately above.
+	var htmlEscaper = /[&<>"'\/]/g;
 
-				function getBackground() {
-					return $("#bkgd input[type='radio']:checked").val();
-				}
+	// Escape a string for HTML interpolation.
+	function escape(string) {
+		return ('' + string).replace(htmlEscaper, function(match) {
+			return htmlEscapes[match];
+		});
+	};
 
-				function getHeader() {
-					return $("#header input[type='text']").val();
-				}
-
-				function setColumns(columns) {
-					var row = "";
-					var col = "";
-					switch (columns) {
-						case "jumbo":
-							return '<div class="jumbotron"><div class="container">';
-						case "12":
-							col = '<div class="col-md-12></div>';
-							break;
-						case "6x2":
-							col = '<div class="col-md-2></div><div class="col-md-2></div>';
-							break;
-						case "4x3":
-							col = '<div class="col-md-3></div><div class="col-md-3></div><div class="col-md-3></div><div class="col-md-3></div>';
-							break;
-						case "3x4":
-							col = '<div class="col-md-4></div><div class="col-md-4></div><div class="col-md-4></div>';
-							break;
-						}
-						var row = '<div class="row">' + col + '</div>';
-						return row;
-					}
-
-					function setHeader(header, columns) {
-						if (columns === "jumbo") {
-							return '<h1>' + header + '</h1>';
-							} else {
-							return '<h2>' + header + '</h2>';
-						}
-					}
-
-					function assembleHTML(columns, background, header) {
-						var bkgd = "";
-						if (background === "white") { 
-							var output = '<div class="container-fluid"><div class="row"><div class="col-md-12">' + header + '</div></div>';
-								} else {
-								var output = '<div class="container-fluid gray-background"><div class="row"><div class="col-md-12">' + header + '</div></div>';
-								}
-								output += columns;
-								output += "</div>";
-							return output;
-						}
-
-				$(function() {
-				});
-			</script>
-	</head>
-	<body>
-		<!-- need a solution for different navbars -->
-		<div class="container-fluid">
-			<div class="row">
-				<section class="col-md-2">
-					<h2>Add Row</h2>
-					<form>
-						<fieldset id="cols">
-							<legend>Columns:</legend>
+	</script>
+</head>
+<body>
+	<!-- need a solution for different navbars -->
+	<div class="container-fluid">
+		<div class="row">
+			<section class="col-md-2">
+				<h2>Add Row</h2>
+				<form>
+					<fieldset id="cols">
+						<legend>Columns:</legend>
 						<label>12 units wide</label><input type="radio" name="columns" value="12">
 						<label>3x4 units wide</label><input type="radio" name="columns" value="3x4">
 						<label>4x3 units wide</label><input type="radio" name="columns" value="4x3">
 						<label>6x2 units wide</label><input type="radio" name="columns" value="6x2">
-						<label>6 units wide, centered</label><input type="radio" name="columns" value="6offset2">
+						<label>6 units wide, centered</label><input type="radio" name="columns" value="6offset3">
 						<label>8 units wide, centered</label><input type="radio" name="columns" value="8offset2">
 						<label>JUMBOTRON</label><input type="radio" name="columns" value="jumbo">
 					</fieldset>
 					<fieldset id="bkgd">
 						<legend>Background Color:</legend>
 						<label>White</label>
-						<input type="radio" name="white" value="white">
+						<input type="radio" name="color" value="white">
 						<label>Gray</label>
-						<input type="radio" name="gray" value="#f2f2f2">
+						<input type="radio" name="color" value="#f2f2f2">
 					</fieldset>
 					<fieldset id="header">
 						<legend>Header Text</legend>
-						<input type="text" name="header">
+						<input type="text" name="header" id="header-input">
 						<button class="btn btn-primary" type="button" onclick="javascript:addElement()">Add A Row</button>
+					</fieldset>
 				</form>
+				<a href="#" class="btn btn-default" onclick="javascript:$('#html').html(escape($('#mockup').html()))">Export to HTML</a>
+				<div id="html"></div>
 			</section>
-			<section class="col-md-9" id="mockup">
+			<section class="col-md-10" id="mockup">
 			</section>
 		</div>
-			<div class=row">
-				<div class="col-md-9">
+		<div class="row">
+			<div class="col-md-9">
 			</div>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
